@@ -1,4 +1,4 @@
-name: Build Highway Racing
+name: Build Signed Highway Racing
 
 on:
   workflow_dispatch:
@@ -30,13 +30,22 @@ jobs:
       - name: Extract project
         run: unzip -q HIGHWAY_RACING_GITHUB_CLOUD_BUILD.zip -d source
 
-      - name: Build game
+      - name: Decode signing key
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          echo "$KEYSTORE_BASE64" | base64 --decode > highway-upload.jks
+
+      - name: Build signed game
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
         run: |
           cd source/DIVYANSHU_HIGHWAY_RACING_ANDROID
           gradle --no-daemon bundleRelease
 
       - uses: actions/upload-artifact@v4
         with:
-          name: highway-racing-aab-unsigned
+          name: highway-racing-aab
           path: source/DIVYANSHU_HIGHWAY_RACING_ANDROID/app/build/outputs/bundle/release/*.aab
           if-no-files-found: error
