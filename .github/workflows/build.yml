@@ -42,7 +42,7 @@ jobs:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
         run: |
           cd source/DIVYANSHU_HIGHWAY_RACING_ANDROID
-          gradle --no-daemon bundleRelease
+          gradle --no-daemon bundleRelease assembleRelease
 
       - uses: actions/upload-artifact@v4
         with:
